@@ -44,11 +44,13 @@ def parse_bar_detail(html: str, url: str) -> Bar:
     food_name = None
     food_description = None
     if section_div:
-        b_tag = section_div.find("b")
-        if b_tag:
-            food_name = b_tag.get_text(strip=True)
-            full_text = section_div.get_text(strip=True)
-            food_description = full_text.replace(food_name, "", 1).strip() or None
+        first_p = section_div.find("p")
+        if first_p:
+            b_tag = first_p.find("b")
+            if b_tag:
+                food_name = b_tag.get_text(strip=True)
+                full_text = first_p.get_text(strip=True)
+                food_description = full_text.replace(food_name, "", 1).strip() or None
 
     img_el = soup.select_one("img.img-fluid.img-single.wp-post-image")
     food_image_url = img_el.get("src") if img_el else None
@@ -75,8 +77,16 @@ async def _get_html(page: Page, url: str) -> str:
 async def scrape_all(delay_ms: int = 1000) -> AsyncGenerator[Bar, None]:
     """Async generator: yields one Bar per buteco, paginating through all listing pages."""
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
+        browser = await p.chromium.launch(
+            channel="chrome",
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled"],
+        )
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            viewport={"width": 1280, "height": 720},
+        )
+        page = await context.new_page()
         current_url: str | None = BASE_URL
 
         while current_url:
