@@ -30,35 +30,37 @@ def geocode_address(query: str) -> tuple[float, float] | None:
 
 def run(db_path: str = "butecos.db") -> None:
     conn = sqlite3.connect(db_path)
-    cur = conn.execute(
-        "SELECT id, street, street_number, neighborhood, city, state "
-        "FROM bars WHERE latitude IS NULL"
-    )
-    rows = cur.fetchall()
-    print(f"Geocoding {len(rows)} bars...")
+    try:
+        cur = conn.execute(
+            "SELECT id, street, street_number, neighborhood, city, state "
+            "FROM bars WHERE latitude IS NULL"
+        )
+        rows = cur.fetchall()
+        print(f"Geocoding {len(rows)} bars...")
 
-    for bar_id, *addr_fields in rows:
-        query = build_query(tuple(addr_fields))
-        if not query:
-            print(f"[SKIP] bar_id={bar_id}: no address fields")
-            continue
-        try:
-            result = geocode_address(query)
-            if result:
-                lat, lon = result
-                conn.execute(
-                    "UPDATE bars SET latitude=?, longitude=? WHERE id=?",
-                    (lat, lon, bar_id),
-                )
-                conn.commit()
-                print(f"[OK] bar_id={bar_id}: {lat:.6f}, {lon:.6f}")
-            else:
-                print(f"[FAIL] bar_id={bar_id}: no results for '{query}'")
-        except Exception as e:
-            print(f"[ERROR] bar_id={bar_id}: {e}")
-        time.sleep(RATE_LIMIT_SECONDS)
-
-    conn.close()
+        for i, (bar_id, *addr_fields) in enumerate(rows):
+            if i > 0:
+                time.sleep(RATE_LIMIT_SECONDS)
+            query = build_query(tuple(addr_fields))
+            if not query:
+                print(f"[SKIP] bar_id={bar_id}: no address fields")
+                continue
+            try:
+                result = geocode_address(query)
+                if result:
+                    lat, lon = result
+                    conn.execute(
+                        "UPDATE bars SET latitude=?, longitude=? WHERE id=?",
+                        (lat, lon, bar_id),
+                    )
+                    conn.commit()
+                    print(f"[OK] bar_id={bar_id}: {lat:.6f}, {lon:.6f}")
+                else:
+                    print(f"[FAIL] bar_id={bar_id}: no results for '{query}'")
+            except Exception as e:
+                print(f"[ERROR] bar_id={bar_id}: {e}")
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
