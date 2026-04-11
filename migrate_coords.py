@@ -5,15 +5,17 @@ import sys
 def migrate(db_path: str) -> None:
     conn = sqlite3.connect(db_path)
     try:
-        conn.execute("ALTER TABLE bars ADD COLUMN latitude REAL")
-        conn.execute("ALTER TABLE bars ADD COLUMN longitude REAL")
-        conn.commit()
-        print("Migration complete: added latitude, longitude columns.")
-    except sqlite3.OperationalError as e:
-        if "duplicate column name" in str(e):
-            print("Columns already exist, skipping.")
+        cur = conn.execute("PRAGMA table_info(bars)")
+        existing = {row[1] for row in cur.fetchall()}
+        added = []
+        for col in ("latitude", "longitude"):
+            if col not in existing:
+                conn.execute(f"ALTER TABLE bars ADD COLUMN {col} REAL")
+                added.append(col)
+        if added:
+            print(f"Migration complete: added {', '.join(added)} columns.")
         else:
-            raise
+            print("Columns already exist, skipping.")
     finally:
         conn.close()
 

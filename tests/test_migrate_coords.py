@@ -41,3 +41,9 @@ def test_migrate_is_idempotent(file_db):
     from migrate_coords import migrate
     migrate(file_db)
     migrate(file_db)  # must not raise
+    conn = sqlite3.connect(file_db)
+    cur = conn.execute("PRAGMA table_info(bars)")
+    columns = [row[1] for row in cur.fetchall()]
+    conn.close()
+    assert columns.count("latitude") == 1
+    assert columns.count("longitude") == 1
