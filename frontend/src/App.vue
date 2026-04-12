@@ -1,5 +1,10 @@
 <template>
   <div class="app-layout">
+    <BarDrawer
+      :bars="bars"
+      :map-bounds="mapBounds"
+      @bar-selected="onBarSelected"
+    />
     <div class="map-wrapper">
       <BarMap
         ref="mapRef"
@@ -24,6 +29,7 @@ import { ref, onMounted } from 'vue'
 import BarMap from './components/BarMap.vue'
 import BarDialog from './components/BarDialog.vue'
 import BarLocationPicker from './components/BarLocationPicker.vue'
+import BarDrawer from './components/BarDrawer.vue'
 
 const selectedBar = ref(null)
 const locationBars = ref(null)
@@ -43,6 +49,11 @@ onMounted(async () => {
     console.error('Error loading bars:', err)
   }
 })
+
+function onBarSelected(bar) {
+  selectedBar.value = bar
+  mapRef.value?.flyTo(bar.latitude, bar.longitude)
+}
 </script>
 
 <style>
@@ -53,10 +64,23 @@ body { margin: 0; }
 .app-layout {
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .map-wrapper {
   height: 100vh;
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .app-layout {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .map-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
 }
 </style>
