@@ -72,6 +72,8 @@ onMounted(() => {
     emit('bounds-changed', mapInstance.getBounds())
   })
 
+  emit('bounds-changed', mapInstance.getBounds())
+
   if (props.bars.length) createMarkers(props.bars)
 })
 

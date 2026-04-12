@@ -84,7 +84,8 @@ const filterVegetarian = ref(false)
 let touchStartY = 0
 
 function onHandleTap() {
-  drawerState.value = drawerState.value === 'collapsed' ? 'half' : 'collapsed'
+  const cycle = { collapsed: 'half', half: 'full', full: 'collapsed' }
+  drawerState.value = cycle[drawerState.value]
 }
 
 function onTouchStart(e) {
