@@ -13,7 +13,7 @@ def get_bars(db_path: str | None = None) -> list[dict]:
     try:
         cur = conn.execute(
             "SELECT id, name, latitude, longitude, food_name, food_image_url, "
-            "food_description, is_vegan, is_vegetarian, address, working_hours "
+            "food_description, food_category, is_vegan, is_vegetarian, address, working_hours "
             "FROM bars WHERE latitude IS NOT NULL AND longitude IS NOT NULL"
         )
         return [dict(row) for row in cur.fetchall()]
