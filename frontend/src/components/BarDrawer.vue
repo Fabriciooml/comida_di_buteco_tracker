@@ -45,6 +45,7 @@
             :src="bar.food_image_url"
             :alt="bar.food_name"
             class="card-photo"
+            @error="$event.target.style.display = 'none'"
           />
           <div class="card-body">
             <div class="card-header">

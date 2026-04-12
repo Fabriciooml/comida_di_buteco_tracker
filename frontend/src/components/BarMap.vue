@@ -54,7 +54,7 @@ function createMarkers(bars) {
 }
 
 function flyTo(lat, lng) {
-  mapInstance.flyTo([lat, lng], 16)
+  mapInstance?.flyTo([lat, lng], 16)
 }
 
 defineExpose({ flyTo })
