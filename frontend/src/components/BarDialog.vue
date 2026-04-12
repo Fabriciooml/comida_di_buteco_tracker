@@ -1,9 +1,14 @@
 <template>
-  <div v-if="bar" class="backdrop" @click.self="$emit('close')">
-    <div class="dialog">
-      <button class="close-btn" @click="$emit('close')" aria-label="Fechar">✕</button>
+  <div v-if="bar" class="backdrop" @click.self="$emit('close')" @keydown.esc="$emit('close')">
+    <div
+      class="dialog"
+      role="dialog"
+      aria-modal="true"
+      :aria-labelledby="bar ? 'dialog-title' : undefined"
+    >
+      <button class="close-btn" ref="closeBtnRef" @click="$emit('close')" aria-label="Fechar">✕</button>
 
-      <h2 class="bar-name">{{ bar.name }}</h2>
+      <h2 id="dialog-title" class="bar-name">{{ bar.name }}</h2>
 
       <img
         v-if="bar.food_image_url"
@@ -32,8 +37,19 @@
 </template>
 
 <script setup>
-defineProps({ bar: Object })
+import { ref, watch, nextTick } from 'vue'
+
+const props = defineProps({ bar: Object })
 defineEmits(['close'])
+
+const closeBtnRef = ref(null)
+
+watch(() => props.bar, async (val) => {
+  if (val) {
+    await nextTick()
+    closeBtnRef.value?.focus()
+  }
+})
 </script>
 
 <style scoped>
