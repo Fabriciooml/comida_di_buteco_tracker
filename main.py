@@ -1,7 +1,8 @@
 import argparse
 import asyncio
 import sqlite3
-from db import init_db, upsert_bar
+from db import init_db, upsert_bar, upsert_bar_hours, get_bar_id
+from hours_parser import parse_hours
 from scraper import scrape_all
 
 
@@ -25,6 +26,9 @@ async def run(args: argparse.Namespace) -> None:
             print(bar)
         else:
             upsert_bar(conn, bar)
+            bar_id = get_bar_id(conn, bar.detail_url)
+            if bar_id is not None:
+                upsert_bar_hours(conn, bar_id, parse_hours(bar.working_hours))
             print(f"[{count}] {bar.name}")
 
     if conn is not None:

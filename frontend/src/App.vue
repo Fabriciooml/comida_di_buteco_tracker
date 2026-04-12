@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, shallowRef, onMounted } from 'vue'
 import BarMap from './components/BarMap.vue'
 import BarDialog from './components/BarDialog.vue'
 import BarLocationPicker from './components/BarLocationPicker.vue'
@@ -34,7 +34,7 @@ import BarDrawer from './components/BarDrawer.vue'
 const selectedBar = ref(null)
 const locationBars = ref(null)
 const bars = ref([])
-const mapBounds = ref(null)
+const mapBounds = shallowRef(null)
 const mapRef = ref(null)
 
 onMounted(async () => {

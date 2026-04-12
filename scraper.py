@@ -2,6 +2,7 @@ import re
 from typing import AsyncGenerator
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright, Page
+from address_parser import parse_address
 from models import Bar
 
 BASE_URL = "https://comidadibuteco.com.br/butecos/belo-horizonte/"
@@ -39,6 +40,7 @@ def parse_bar_detail(html: str, url: str) -> Bar:
     name = name_el.get_text(strip=True) if name_el else ""
 
     address = _label_value(soup, r"Endere[cç]o")
+    parsed_address = parse_address(address)
 
     section_div = soup.select_one("div.section-text")
     food_name = None
@@ -60,6 +62,12 @@ def parse_bar_detail(html: str, url: str) -> Bar:
     return Bar(
         name=name,
         address=address,
+        street=parsed_address["street"],
+        street_number=parsed_address["street_number"],
+        complement=parsed_address["complement"],
+        neighborhood=parsed_address["neighborhood"],
+        city=parsed_address["city"],
+        state=parsed_address["state"],
         food_name=food_name,
         food_image_url=food_image_url,
         food_description=food_description,

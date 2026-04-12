@@ -18,6 +18,12 @@ def test_bar_all_fields():
 def test_bar_optional_fields_default_none():
     bar = Bar(name="Mínimo", detail_url="https://comidadibuteco.com.br/butecos/minimo/")
     assert bar.address is None
+    assert bar.street is None
+    assert bar.street_number is None
+    assert bar.complement is None
+    assert bar.neighborhood is None
+    assert bar.city is None
+    assert bar.state is None
     assert bar.food_name is None
     assert bar.food_image_url is None
     assert bar.food_description is None

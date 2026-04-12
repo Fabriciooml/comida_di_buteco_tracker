@@ -27,7 +27,13 @@ def test_parse_detail_extracts_all_fields(fixture_html):
     url = "https://comidadibuteco.com.br/butecos/bar-exemplo-1/"
     bar = parse_bar_detail(html, url)
     assert bar.name == "Bar Exemplo 1"
-    assert bar.address == "Rua das Flores, 123 — Savassi, BH — MG"
+    assert bar.address == "Rua das Flores, 123 | Savassi, Belo Horizonte – MG"
+    assert bar.street == "Rua das Flores"
+    assert bar.street_number == "123"
+    assert bar.complement is None
+    assert bar.neighborhood == "Savassi"
+    assert bar.city == "Belo Horizonte"
+    assert bar.state == "MG"
     assert bar.food_name == "Bolinho Crocante"
     assert bar.food_image_url == "https://comidadibuteco.com.br/wp-content/uploads/img.jpg"
     assert "crocante" in bar.food_description.lower()

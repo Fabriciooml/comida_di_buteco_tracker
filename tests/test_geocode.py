@@ -36,6 +36,29 @@ def test_geocode_address_returns_coords_on_hit():
     assert result == (-19.9245, -43.9352)
 
 
+def test_fallback_queries_drops_neighborhood():
+    from geocode import _fallback_queries
+    fallbacks = _fallback_queries("Rua das Flores", "100", "Palmeiras", "Belo Horizonte", "MG")
+    labels = [label for label, _ in fallbacks]
+    queries = [q for _, q in fallbacks]
+    assert "without neighborhood" in labels
+    assert "Rua das Flores 100, Belo Horizonte, MG" in queries
+
+
+def test_fallback_queries_drops_street_prefix():
+    from geocode import _fallback_queries
+    fallbacks = _fallback_queries("Rua das Flores", "100", "Palmeiras", "Belo Horizonte", "MG")
+    queries = [q for _, q in fallbacks]
+    assert "das Flores 100, Palmeiras, Belo Horizonte, MG" in queries
+
+
+def test_fallback_queries_neighborhood_only():
+    from geocode import _fallback_queries
+    fallbacks = _fallback_queries("Rua das Flores", "100", "Palmeiras", "Belo Horizonte", "MG")
+    queries = [q for _, q in fallbacks]
+    assert "Palmeiras, Belo Horizonte, MG" in queries
+
+
 def test_geocode_address_returns_none_on_empty_results():
     from geocode import geocode_address
     with patch("urllib.request.urlopen", return_value=_make_mock_urlopen([])):
