@@ -1,24 +1,24 @@
 :root {
-  /* Surfaces */
-  --color-bg:             #1a0a00;
-  --color-surface:        #2d1500;
-  --color-surface-hover:  #3d1f05;
-  --color-border:         #5c3a1e;
+  /* Surfaces — Nord Polar Night */
+  --color-bg:             #2E3440;
+  --color-surface:        #3B4252;
+  --color-surface-hover:  #434C5E;
+  --color-border:         #4C566A;
 
-  /* Accent */
-  --color-accent:         #f4a261;
-  --color-accent-alt:     #e76f51;
+  /* Accent — Nord Frost */
+  --color-accent:         #88C0D0;
+  --color-accent-alt:     #81A1C1;
 
-  /* Text */
-  --color-text-primary:   #f0dfc0;
-  --color-text-secondary: #c9a882;
-  --color-text-muted:     #a08060;
+  /* Text — Nord Snow Storm */
+  --color-text-primary:   #ECEFF4;
+  --color-text-secondary: #D8DEE9;
+  --color-text-muted:     #7B88A0;
 
-  /* Semantic */
-  --color-vegan-bg:       #386641;
-  --color-vegan-text:     #a7c957;
-  --color-veg-bg:         #1a4a6b;
-  --color-veg-text:       #90d0f0;
+  /* Semantic — Nord Aurora */
+  --color-vegan-bg:       #3B4A3F;
+  --color-vegan-text:     #A3BE8C;
+  --color-veg-bg:         #3B4A5E;
+  --color-veg-text:       #8FBCBB;
   --color-overlay:        rgba(0, 0, 0, 0.65);
 
   /* Typography */
