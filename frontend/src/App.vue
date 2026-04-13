@@ -1,5 +1,9 @@
 <template>
   <div class="app-layout">
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Carregando bares...</p>
+    </div>
     <BarDrawer
       :bars="bars"
       :map-bounds="mapBounds"
@@ -36,6 +40,7 @@ const locationBars = ref(null)
 const bars = ref([])
 const mapBounds = shallowRef(null)
 const mapRef = ref(null)
+const loading = ref(true)
 
 onMounted(async () => {
   try {
@@ -47,6 +52,8 @@ onMounted(async () => {
     bars.value = await resp.json()
   } catch (err) {
     console.error('Error loading bars:', err)
+  } finally {
+    loading.value = false
   }
 })
 
@@ -55,10 +62,6 @@ function onBarSelected(bar) {
   mapRef.value?.flyTo(bar.latitude, bar.longitude)
 }
 </script>
-
-<style>
-body { margin: 0; }
-</style>
 
 <style scoped>
 .app-layout {
@@ -70,6 +73,37 @@ body { margin: 0; }
 .map-wrapper {
   height: 100vh;
   width: 100%;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.loading-text {
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (min-width: 768px) {
