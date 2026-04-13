@@ -35,8 +35,8 @@ function createMarkers(bars) {
 
     const marker = L.circleMarker([latitude, longitude], {
       radius: isMulti ? 10 : 8,
-      fillColor: isMulti ? '#e76f51' : '#f4a261',
-      color: '#f0dfc0',
+      fillColor: '#88C0D0',
+      color: '#ECEFF4',
       weight: 2,
       opacity: 1,
       fillOpacity: 0.9,
