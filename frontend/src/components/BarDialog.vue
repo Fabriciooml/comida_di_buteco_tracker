@@ -14,7 +14,7 @@
 
       <h2 id="dialog-title" class="bar-name">{{ bar.name }}</h2>
 
-      <div class="image-container" :class="{ 'has-image': bar.food_image_url && !imageError }">
+      <div class="image-container">
         <img
           v-if="bar.food_image_url && !imageError"
           :src="bar.food_image_url"
