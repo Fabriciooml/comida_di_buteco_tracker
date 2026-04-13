@@ -11,6 +11,11 @@
     </div>
 
     <div class="drawer-content">
+      <div class="drawer-brand">
+        <span class="brand-title">Comida di Buteco</span>
+        <span class="brand-sub">Belo Horizonte</span>
+      </div>
+
       <input
         v-model="searchQuery"
         class="search-input"
@@ -20,15 +25,15 @@
 
       <div class="filter-chips">
         <button
-          class="chip"
+          class="chip vegan-chip"
           :class="{ active: filterVegan }"
           @click="filterVegan = !filterVegan"
-        >Vegano</button>
+        >🌿 Vegano</button>
         <button
-          class="chip vegetarian"
+          class="chip vegetarian-chip"
           :class="{ active: filterVegetarian }"
           @click="filterVegetarian = !filterVegetarian"
-        >Vegetariano</button>
+        >🥕 Vegetariano</button>
       </div>
 
       <p class="result-count">{{ visibleBars.length }} bares na área</p>
@@ -48,18 +53,18 @@
             @error="$event.target.style.display = 'none'"
           />
           <div class="card-body">
-            <div class="card-header">
-              <strong class="bar-name">{{ bar.name }}</strong>
-              <div class="badges">
-                <span v-if="bar.is_vegan" class="badge vegan">vegano</span>
-                <span v-if="bar.is_vegetarian" class="badge vegetarian">vegetariano</span>
-              </div>
+            <div class="card-badges">
+              <span v-if="bar.is_vegan" class="badge vegan">vegano</span>
+              <span v-if="bar.is_vegetarian" class="badge vegetarian">vegetariano</span>
             </div>
+            <strong class="bar-name">{{ bar.name }}</strong>
             <p class="dish">
               {{ bar.food_name }}<span v-if="bar.food_category"> · {{ bar.food_category }}</span>
             </p>
-            <p class="meta">{{ bar.address }}</p>
-            <p v-if="bar.working_hours" class="meta">{{ bar.working_hours }}</p>
+            <div class="card-meta">
+              <span v-if="bar.address" class="meta-item">📍 {{ bar.address }}</span>
+              <span v-if="bar.working_hours" class="meta-item">🕐 {{ bar.working_hours }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -136,8 +141,8 @@ const visibleBars = computed(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #0f3460;
-  border-top: 2px solid #e94560;
+  background: var(--color-surface);
+  border-top: 2px solid var(--color-border);
   border-radius: 16px 16px 0 0;
   transition: height 0.3s ease;
   z-index: 1000;
@@ -166,12 +171,12 @@ const visibleBars = computed(() => {
 .handle-bar {
   width: 40px;
   height: 4px;
-  background: #444;
+  background: var(--color-border);
   border-radius: 2px;
   margin-bottom: 4px;
 }
 
-.bar-count { font-size: 12px; color: #aaa; }
+.bar-count { font-size: 12px; color: var(--color-text-muted); }
 
 .drawer-content {
   display: flex;
@@ -182,52 +187,100 @@ const visibleBars = computed(() => {
   gap: 8px;
 }
 
+.drawer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.02em;
+}
+
+.brand-sub {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 .search-input {
   width: 100%;
   padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #333;
-  background: #0a0a1a;
-  color: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
   font-size: 14px;
   box-sizing: border-box;
 }
 
-.search-input::placeholder { color: #555; }
+.search-input::placeholder { color: var(--color-text-muted); }
 
 .filter-chips { display: flex; gap: 8px; }
 
 .chip {
-  padding: 4px 12px;
-  border-radius: 16px;
-  border: 1px solid #333;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
   background: transparent;
-  color: #aaa;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.chip.active           { background: #2d6a4f; color: #95d5b2; border-color: #2d6a4f; }
-.chip.vegetarian.active { background: #1a4a6b; color: #90d0f0; border-color: #1a4a6b; }
+.chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text-secondary);
+}
 
-.result-count { font-size: 11px; color: #666; margin: 0; }
+.vegan-chip.active {
+  background: var(--color-vegan-bg);
+  color: var(--color-vegan-text);
+  border-color: var(--color-vegan-bg);
+}
+
+.vegetarian-chip.active {
+  background: var(--color-veg-bg);
+  color: var(--color-veg-text);
+  border-color: var(--color-veg-bg);
+}
+
+.result-count { font-size: 11px; color: var(--color-text-muted); margin: 0; }
 
 .bar-list {
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .bar-card {
-  background: #16213e;
-  border-radius: 8px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s, transform 0.15s;
 }
 
-.bar-card:hover { background: #1e2d50; }
+.bar-card:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-2px);
+}
 
 .card-photo {
   width: 100%;
@@ -243,22 +296,33 @@ const visibleBars = computed(() => {
   gap: 4px;
 }
 
-.card-header {
+.card-badges {
+  position: absolute;
+  top: 8px;
+  right: 8px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
 }
 
-.bar-name    { color: #fff; font-size: 14px; }
-.badges      { display: flex; gap: 4px; flex-shrink: 0; }
+.bar-name {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: block;
+  padding-right: 60px;
+}
 
-.badge             { font-size: 10px; padding: 2px 6px; border-radius: 3px; }
-.badge.vegan       { background: #2d6a4f; color: #95d5b2; }
-.badge.vegetarian  { background: #1a4a6b; color: #90d0f0; }
+.badge             { font-size: 10px; padding: 2px 6px; border-radius: var(--radius-sm); }
+.badge.vegan       { background: var(--color-vegan-bg); color: var(--color-vegan-text); }
+.badge.vegetarian  { background: var(--color-veg-bg);   color: var(--color-veg-text); }
 
-.dish { color: #e94560; font-size: 12px; margin: 0; }
-.meta { color: #666; font-size: 11px; margin: 0; }
+.dish { color: var(--color-accent-alt); font-size: 12px; margin: 0; }
+
+.card-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.meta-item { color: var(--color-text-muted); font-size: 11px; }
 
 /* Desktop sidebar */
 @media (min-width: 768px) {
@@ -267,15 +331,18 @@ const visibleBars = computed(() => {
     width: 300px;
     height: 100vh;
     border-top: none;
-    border-right: 2px solid #e94560;
+    border-right: 2px solid var(--color-border);
     border-radius: 0;
     flex-shrink: 0;
     transition: none;
   }
 
+  .bar-drawer.collapsed,
+  .bar-drawer.half,
+  .bar-drawer.full { height: 100vh; }
+
   .drawer-handle { display: none; }
 
-  /* Always show content on desktop regardless of drawerState */
   .bar-drawer.collapsed .drawer-content { display: flex; }
 
   .drawer-content { padding: 16px 12px; }
