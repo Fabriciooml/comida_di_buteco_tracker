@@ -143,7 +143,7 @@ const visibleBars = computed(() => {
   right: 0;
   background: var(--color-surface);
   border-top: 2px solid var(--color-border);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   transition: height 0.3s ease;
   z-index: 1000;
   display: flex;
@@ -220,7 +220,6 @@ const visibleBars = computed(() => {
   color: var(--color-text-primary);
   font-family: var(--font-body);
   font-size: 14px;
-  box-sizing: border-box;
 }
 
 .search-input::placeholder { color: var(--color-text-muted); }
