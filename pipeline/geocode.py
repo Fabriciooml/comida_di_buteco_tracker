@@ -15,49 +15,59 @@ _NEIGHBORHOOD_CORRECTIONS = {
 }
 
 
-def build_query(row: tuple) -> str:
-    street, street_number, neighborhood, city, state = row
-    street_part = f"{street or ''} {street_number or ''}".strip() or None
-    parts = [p for p in [street_part, neighborhood, city, state] if p]
-    return ", ".join(parts)
+def build_params(street: str | None, street_number: str | None,
+                 city: str | None, state: str | None) -> dict:
+    street_val = f"{street or ''} {street_number or ''}".strip() or None
+    return {k: v for k, v in {
+        "street": street_val,
+        "city": city,
+        "state": state,
+    }.items() if v}
 
 
-def _fallback_queries(street: str | None, street_number: str | None,
-                      neighborhood: str | None, city: str | None,
-                      state: str | None) -> list[tuple[str, str]]:
-    """Return (label, query) pairs to try when the primary query fails."""
+def _fallback_params(street: str | None, street_number: str | None,
+                     neighborhood: str | None, city: str | None,
+                     state: str | None) -> list[tuple[str, dict]]:
+    """Return (label, params) pairs to try when the primary query fails."""
     fallbacks = []
 
-    # 1. Drop neighborhood
-    street_part = f"{street or ''} {street_number or ''}".strip() or None
-    parts = [p for p in [street_part, city, state] if p]
-    if parts and parts != [p for p in [street_part, neighborhood, city, state] if p]:
-        fallbacks.append(("without neighborhood", ", ".join(parts)))
-
-    # 2. Drop street type prefix (first word), keep street name + number + neighborhood
+    # 1. Structured — drop street type prefix (first word)
     if street:
         words = street.split(None, 1)
         if len(words) == 2:
             street_name_only = f"{words[1]} {street_number or ''}".strip()
-            parts2 = [p for p in [street_name_only, neighborhood, city, state] if p]
-            fallbacks.append(("without street prefix", ", ".join(parts2)))
+            fallbacks.append(("without street prefix", {
+                k: v for k, v in {
+                    "street": street_name_only,
+                    "city": city,
+                    "state": state,
+                }.items() if v
+            }))
 
-    # 3. Drop street entirely — coarse neighborhood-level fallback
+    # 2. Free-text with neighborhood (the original approach)
+    street_part = f"{street or ''} {street_number or ''}".strip() or None
+    parts = [p for p in [street_part, neighborhood, city, state] if p]
+    if parts:
+        fallbacks.append(("free-text with neighborhood", {"q": ", ".join(parts)}))
+
+    # 3. Free-text neighborhood-only — coarse fallback
     parts3 = [p for p in [neighborhood, city, state] if p]
     if parts3:
-        fallbacks.append(("neighborhood only", ", ".join(parts3)))
+        fallbacks.append(("neighborhood only", {"q": ", ".join(parts3)}))
 
     return fallbacks
 
 
-def geocode_address(query: str) -> tuple[float, float] | None:
-    params = urllib.parse.urlencode({"q": query, "format": "json", "limit": 1})
-    url = f"{NOMINATIM_URL}?{params}"
+def geocode_address(params: dict) -> tuple[float, float] | None:
+    base: dict = {"format": "json", "limit": 1}
+    if "q" not in params:
+        base["countrycodes"] = "br"
+    url = f"{NOMINATIM_URL}?{urllib.parse.urlencode({**base, **params})}"
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=10) as resp:
         results = json.loads(resp.read())
     if results:
-        return float(results[0]["lat"]), float(results[0]["lon"])
+        return round(float(results[0]["lat"]), 7), round(float(results[0]["lon"]), 7)
     return None
 
 
@@ -83,14 +93,13 @@ def run(db_path: str = "butecos.db") -> None:
             if i > 0:
                 time.sleep(RATE_LIMIT_SECONDS)
 
-            addr = (street, street_number, neighborhood, city, state)
-            query = build_query(addr)
-            if not query:
+            params = build_params(street, street_number, city, state)
+            if not params:
                 print(f"[SKIP] bar_id={bar_id}: no address fields")
                 continue
 
             try:
-                result = geocode_address(query)
+                result = geocode_address(params)
                 if result:
                     lat, lon = result
                     conn.execute(
@@ -98,14 +107,16 @@ def run(db_path: str = "butecos.db") -> None:
                         (lat, lon, bar_id),
                     )
                     conn.commit()
-                    print(f"[OK] bar_id={bar_id}: {lat:.6f}, {lon:.6f}")
+                    print(f"[OK] bar_id={bar_id}: {lat:.7f}, {lon:.7f}")
                     continue
 
                 # Primary query failed — try fallbacks.
                 resolved = False
-                for label, fallback_query in _fallback_queries(street, street_number, neighborhood, city, state):
+                for label, fallback_params in _fallback_params(
+                    street, street_number, neighborhood, city, state
+                ):
                     time.sleep(RATE_LIMIT_SECONDS)
-                    result = geocode_address(fallback_query)
+                    result = geocode_address(fallback_params)
                     if result:
                         lat, lon = result
                         conn.execute(
@@ -113,12 +124,12 @@ def run(db_path: str = "butecos.db") -> None:
                             (lat, lon, bar_id),
                         )
                         conn.commit()
-                        print(f"[OK-FALLBACK({label})] bar_id={bar_id}: {lat:.6f}, {lon:.6f}")
+                        print(f"[OK-FALLBACK({label})] bar_id={bar_id}: {lat:.7f}, {lon:.7f}")
                         resolved = True
                         break
 
                 if not resolved:
-                    print(f"[FAIL] bar_id={bar_id}: no results for '{query}' (all fallbacks tried)")
+                    print(f"[FAIL] bar_id={bar_id}: no results (all fallbacks tried)")
 
             except Exception as e:
                 print(f"[ERROR] bar_id={bar_id}: {e}")

@@ -13,7 +13,7 @@
     <div class="drawer-content">
       <div class="drawer-brand">
         <span class="brand-title">Comida di Buteco</span>
-        <span class="brand-sub">Belo Horizonte</span>
+        <span class="brand-sub">Site não oficial · não associado ao Comida di Buteco</span>
       </div>
 
       <input
@@ -35,6 +35,7 @@
           @click="filterVegetarian = !filterVegetarian"
         >🥕 Vegetariano</button>
       </div>
+      <p class="filter-hint">Categorias baseadas em palavras-chave</p>
 
       <p class="result-count">{{ visibleBars.length }} bares na área</p>
 
@@ -64,6 +65,14 @@
             <div class="card-meta">
               <span v-if="bar.address" class="meta-item">📍 {{ bar.address }}</span>
               <span v-if="bar.working_hours" class="meta-item">🕐 {{ bar.working_hours }}</span>
+              <a
+                v-if="bar.detail_url"
+                :href="bar.detail_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="meta-item card-link"
+                @click.stop
+              >🔗 Ver no site</a>
             </div>
           </div>
         </div>
@@ -263,6 +272,8 @@ const visibleBars = computed(() => {
   border-color: var(--color-veg-bg);
 }
 
+.filter-hint { font-size: 10px; color: var(--color-text-muted); margin: 0; }
+
 .result-count { font-size: 11px; color: var(--color-text-muted); margin: 0; }
 
 .bar-list {
@@ -330,6 +341,8 @@ const visibleBars = computed(() => {
 
 .card-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; }
 .meta-item { color: var(--color-text-muted); font-size: 11px; }
+.card-link { color: var(--color-accent); text-decoration: none; }
+.card-link:hover { text-decoration: underline; }
 
 /* Desktop sidebar */
 @media (min-width: 768px) {

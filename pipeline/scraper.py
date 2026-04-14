@@ -5,7 +5,7 @@ from playwright.async_api import async_playwright, Page
 from pipeline.parsers.address_parser import parse_address
 from pipeline.models import Bar
 
-BASE_URL = "https://comidadibuteco.com.br/butecos/belo-horizonte/"
+BASE_URL = "https://comidadibuteco.com.br/butecos/"
 
 
 def _label_value(soup: BeautifulSoup, pattern: str) -> str | None:

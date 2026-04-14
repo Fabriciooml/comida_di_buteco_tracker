@@ -72,6 +72,14 @@ onMounted(() => {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(mapInstance)
 
+  const infoControl = L.control({ position: 'bottomleft' })
+  infoControl.onAdd = () => {
+    const div = L.DomUtil.create('div', 'map-disclaimer')
+    div.textContent = 'Localização aproximada'
+    return div
+  }
+  infoControl.addTo(mapInstance)
+
   mapInstance.on('moveend zoomend', () => {
     emit('bounds-changed', mapInstance.getBounds())
   })
@@ -88,3 +96,14 @@ onUnmounted(() => {
   }
 })
 </script>
+
+<style>
+.map-disclaimer {
+  background: rgba(46, 52, 64, 0.75);
+  color: #d8dee9;
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+</style>

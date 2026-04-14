@@ -2,7 +2,8 @@ DB     ?= butecos.db
 PYTHON ?= .venv/bin/python
 
 .PHONY: help install install-frontend test run-api dev-frontend \
-        scrape scrape-dry-run migrate geocode build-frontend clean
+        scrape scrape-dry-run migrate geocode regeocode \
+        parse-hours parse-food parse build-frontend clean
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -18,7 +19,7 @@ install-frontend: ## Install Node dependencies
 # ── Development ──────────────────────────────────────────────────────────────
 
 run-api: ## Start FastAPI server on :8000 (with reload)
-	uvicorn api.main:app --reload
+	uv run uvicorn api.main:app --reload
 
 dev-frontend: ## Start Vite dev server on :5173
 	cd frontend && npm run dev
@@ -44,6 +45,17 @@ migrate: ## Run all DB migrations in order (idempotent)
 
 geocode: ## Add lat/lon to bars via Nominatim (DB=butecos.db)
 	$(PYTHON) -m pipeline.geocode $(DB)
+
+regeocode: ## Re-geocode existing bars with improved structured query (DB=butecos.db)
+	$(PYTHON) -m migrations.regeocode --db $(DB)
+
+parse-hours: ## Re-parse working_hours → bar_hours table (DB=butecos.db)
+	$(PYTHON) -m migrations.migrate_hours --db $(DB)
+
+parse-food: ## Re-classify food category/vegan/vegetarian (DB=butecos.db)
+	$(PYTHON) -m migrations.migrate_food_attributes --db $(DB)
+
+parse: parse-hours parse-food ## Run all parsers against DB (DB=butecos.db)
 
 # ── Frontend build ───────────────────────────────────────────────────────────
 

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from api.routers import bars
 
-app = FastAPI(title="Comida di Buteco BH")
+app = FastAPI(title="Comida di Buteco")
 app.include_router(bars.router, prefix="/api")
 
 dist_dir = Path(__file__).parent.parent / "frontend" / "dist"
