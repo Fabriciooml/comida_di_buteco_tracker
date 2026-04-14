@@ -43,6 +43,15 @@ const mapRef = ref(null)
 const loading = ref(true)
 
 onMounted(async () => {
+  navigator.geolocation?.getCurrentPosition(
+    (pos) => {
+      console.log('[geolocation]', pos.coords.latitude, pos.coords.longitude, 'accuracy:', pos.coords.accuracy, 'm')
+      mapRef.value?.setCenter(pos.coords.latitude, pos.coords.longitude)
+    },
+    (err) => console.warn('[geolocation] error:', err.code, err.message),
+    { timeout: 5000, enableHighAccuracy: true }
+  )
+
   try {
     const resp = await fetch('/api/bars')
     if (!resp.ok) {

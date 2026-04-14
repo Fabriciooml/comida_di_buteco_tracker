@@ -1,5 +1,4 @@
 .venv/
-butecos.db
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -7,3 +6,16 @@ __pycache__/
 .superpowers/
 frontend/node_modules/
 frontend/dist/
+docs/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+tests/
+frontend/node_modules
+frontend/dist
+butecos.db
+*.db
+.vscode
+docs/

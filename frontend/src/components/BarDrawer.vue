@@ -131,6 +131,14 @@ const visibleBars = computed(() => {
   if (filterVegan.value) result = result.filter(b => b.is_vegan)
   if (filterVegetarian.value) result = result.filter(b => b.is_vegetarian)
 
+  if (props.mapBounds) {
+    const center = props.mapBounds.getCenter()
+    result = [...result].sort((a, b) =>
+      center.distanceTo([a.latitude, a.longitude]) -
+      center.distanceTo([b.latitude, b.longitude])
+    )
+  }
+
   return result
 })
 </script>

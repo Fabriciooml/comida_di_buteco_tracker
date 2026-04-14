@@ -57,12 +57,16 @@ function flyTo(lat, lng) {
   mapInstance?.flyTo([lat, lng], 16)
 }
 
-defineExpose({ flyTo })
+function setCenter(lat, lng) {
+  mapInstance?.setView([lat, lng], 15)
+}
+
+defineExpose({ flyTo, setCenter })
 
 watch(() => props.bars, createMarkers)
 
 onMounted(() => {
-  mapInstance = L.map(mapEl.value).setView([-19.9167, -43.9345], 13)
+  mapInstance = L.map(mapEl.value).setView([-19.9189, -43.9381], 13)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
