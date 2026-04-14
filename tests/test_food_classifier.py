@@ -1,4 +1,4 @@
-from food_classifier import CATEGORIES, classify_food
+from pipeline.parsers.food_classifier import CATEGORIES, classify_food
 
 
 def test_classify_food_returns_valid_category():

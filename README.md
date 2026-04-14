@@ -71,14 +71,17 @@ make test
 
 ```
 ├── main.py               # Scraper CLI entry point
-├── scraper.py            # Playwright async crawler
-├── db.py                 # SQLite schema & data access
-├── models.py             # Bar dataclass
-├── geocode.py            # Nominatim geocoding
-├── address_parser.py     # Address field extraction
-├── food_classifier.py    # Dietary attribute classification
-├── hours_parser.py       # Opening hours parsing
-├── migrate*.py           # DB schema migrations
+├── pipeline/
+│   ├── scraper.py        # Playwright async crawler
+│   ├── db.py             # SQLite schema & data access
+│   ├── models.py         # Bar dataclass
+│   ├── geocode.py        # Nominatim geocoding
+│   └── parsers/
+│       ├── address_parser.py    # Address field extraction
+│       ├── food_classifier.py   # Dietary attribute classification
+│       └── hours_parser.py      # Opening hours parsing
+├── migrations/
+│   └── migrate*.py       # DB schema migrations
 ├── api/
 │   ├── main.py           # FastAPI app (serves frontend + API)
 │   └── routers/bars.py   # GET /api/bars

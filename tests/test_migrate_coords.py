@@ -2,7 +2,7 @@ import os
 import sqlite3
 import tempfile
 import pytest
-from db import init_db
+from pipeline.db import init_db
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def file_db():
 
 
 def test_migrate_adds_latitude_column(file_db):
-    from migrate_coords import migrate
+    from migrations.migrate_coords import migrate
     migrate(file_db)
     conn = sqlite3.connect(file_db)
     cur = conn.execute("PRAGMA table_info(bars)")
@@ -28,7 +28,7 @@ def test_migrate_adds_latitude_column(file_db):
 
 
 def test_migrate_adds_longitude_column(file_db):
-    from migrate_coords import migrate
+    from migrations.migrate_coords import migrate
     migrate(file_db)
     conn = sqlite3.connect(file_db)
     cur = conn.execute("PRAGMA table_info(bars)")
@@ -38,7 +38,7 @@ def test_migrate_adds_longitude_column(file_db):
 
 
 def test_migrate_is_idempotent(file_db):
-    from migrate_coords import migrate
+    from migrations.migrate_coords import migrate
     migrate(file_db)
     migrate(file_db)  # must not raise
     conn = sqlite3.connect(file_db)

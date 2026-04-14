@@ -1,4 +1,4 @@
-from models import Bar
+from pipeline.models import Bar
 
 
 def test_bar_all_fields():

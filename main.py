@@ -1,9 +1,9 @@
 import argparse
 import asyncio
 import sqlite3
-from db import init_db, upsert_bar, upsert_bar_hours, get_bar_id
-from hours_parser import parse_hours
-from scraper import scrape_all
+from pipeline.db import init_db, upsert_bar, upsert_bar_hours, get_bar_id
+from pipeline.parsers.hours_parser import parse_hours
+from pipeline.scraper import scrape_all
 
 
 def parse_args() -> argparse.Namespace:

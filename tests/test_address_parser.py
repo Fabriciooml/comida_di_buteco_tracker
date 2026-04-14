@@ -1,4 +1,4 @@
-from address_parser import parse_address
+from pipeline.parsers.address_parser import parse_address
 
 
 def test_standard_address():

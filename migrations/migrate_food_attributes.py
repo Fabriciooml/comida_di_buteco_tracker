@@ -3,7 +3,7 @@
 import argparse
 import sqlite3
 
-from food_classifier import classify_food
+from pipeline.parsers.food_classifier import classify_food
 
 NEW_COLUMNS = [
     ("food_category", "TEXT"),

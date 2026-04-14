@@ -1,4 +1,4 @@
-from hours_parser import parse_hours
+from pipeline.parsers.hours_parser import parse_hours
 
 
 def test_none_returns_empty():

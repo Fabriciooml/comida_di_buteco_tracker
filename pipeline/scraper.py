@@ -2,8 +2,8 @@ import re
 from typing import AsyncGenerator
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright, Page
-from address_parser import parse_address
-from models import Bar
+from pipeline.parsers.address_parser import parse_address
+from pipeline.models import Bar
 
 BASE_URL = "https://comidadibuteco.com.br/butecos/belo-horizonte/"
 

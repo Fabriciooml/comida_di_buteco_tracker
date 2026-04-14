@@ -1,5 +1,5 @@
-from models import Bar
-from scraper import parse_bar_links_and_next, parse_bar_detail
+from pipeline.models import Bar
+from pipeline.scraper import parse_bar_links_and_next, parse_bar_detail
 
 
 def test_parse_listing_extracts_detail_urls(fixture_html):

@@ -3,8 +3,8 @@
 import argparse
 import sqlite3
 
-from db import CREATE_BAR_HOURS_TABLE, CREATE_BAR_HOURS_INDEX, upsert_bar_hours
-from hours_parser import parse_hours
+from pipeline.db import CREATE_BAR_HOURS_TABLE, CREATE_BAR_HOURS_INDEX, upsert_bar_hours
+from pipeline.parsers.hours_parser import parse_hours
 
 
 def ensure_table(conn: sqlite3.Connection) -> None:

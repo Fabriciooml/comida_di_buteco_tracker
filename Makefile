@@ -37,13 +37,13 @@ scrape-dry-run: ## Scrape bars and print to stdout (no DB write)
 	$(PYTHON) main.py --dry-run
 
 migrate: ## Run all DB migrations in order (idempotent)
-	$(PYTHON) migrate.py --db $(DB)
-	$(PYTHON) migrate_coords.py $(DB)
-	$(PYTHON) migrate_hours.py --db $(DB)
-	$(PYTHON) migrate_food_attributes.py --db $(DB)
+	$(PYTHON) -m migrations.migrate --db $(DB)
+	$(PYTHON) -m migrations.migrate_coords $(DB)
+	$(PYTHON) -m migrations.migrate_hours --db $(DB)
+	$(PYTHON) -m migrations.migrate_food_attributes --db $(DB)
 
 geocode: ## Add lat/lon to bars via Nominatim (DB=butecos.db)
-	$(PYTHON) geocode.py $(DB)
+	$(PYTHON) -m pipeline.geocode $(DB)
 
 # ── Frontend build ───────────────────────────────────────────────────────────
 

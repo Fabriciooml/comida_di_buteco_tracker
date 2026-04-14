@@ -1,6 +1,6 @@
 import sqlite3
-from models import Bar
-from hours_parser import ParsedHours
+from pipeline.models import Bar
+from pipeline.parsers.hours_parser import ParsedHours
 
 CREATE_TABLE = """
 CREATE TABLE IF NOT EXISTS bars (

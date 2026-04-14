@@ -3,7 +3,7 @@
 import argparse
 import sqlite3
 
-from address_parser import parse_address
+from pipeline.parsers.address_parser import parse_address
 
 NEW_COLUMNS = ["street", "street_number", "complement", "neighborhood", "city", "state"]
 

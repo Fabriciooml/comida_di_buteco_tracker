@@ -1,6 +1,6 @@
 import sqlite3
-from models import Bar
-from db import init_db, upsert_bar, upsert_bar_hours, get_bar_id
+from pipeline.models import Bar
+from pipeline.db import init_db, upsert_bar, upsert_bar_hours, get_bar_id
 
 
 def test_init_db_creates_table(mem_db):

@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --from=builder /app/frontend/dist ./frontend/dist
 COPY api/ ./api/
-COPY db.py models.py hours_parser.py ./
+COPY pipeline/ ./pipeline/
 
 ENV DB_PATH=/app/data/butecos.db
 EXPOSE 8000
